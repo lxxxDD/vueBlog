@@ -22,6 +22,7 @@
               opacity: 0;
             "
           >
+          
             +
           </div>
           <img :src="$BASEURL +imageUrl" v-if="imageUrl"  style="aspect-ratio: 1/1; width: 100%;height: 100%;">
