@@ -15,6 +15,7 @@ Vue.use(ElementUI);
 Vue.use(wow);
 Vue.component('AppNav', AppNav);
 Vue.component('bookLoading', bookLoading);
+Vue.prototype.$BASEURL = 'http://localhost:5297/';
 new Vue({
   router,
   store,

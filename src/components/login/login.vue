@@ -6,8 +6,8 @@
           <input
             type="checkbox"
             class="toggle"
-           v-model="isLogin"
-           @change="toggleCard"
+            v-model="isLogin"
+            @change="toggleCard"
           />
           <span class="slider"></span>
           <span class="card-side"></span>
@@ -117,8 +117,8 @@ export default {
           } else {
             console.log(res.data, "登录成功");
 
-            localStorage.setItem('userInfo',JSON.stringify(res.data))
-            
+            localStorage.setItem("userInfo", JSON.stringify(res.data));
+
             this.loginInfo = {
               userId: 0,
               username: null,
@@ -126,8 +126,7 @@ export default {
               imgUrl: null,
               email: null,
             };
-this.$router.push('/')
-
+            this.$router.push("/");
           }
         })
         .catch((res) => {});
@@ -159,18 +158,13 @@ this.$router.push('/')
           password: null,
           username: null,
         };
-        this.toggleCard()
-      
-      
-       
-
-    
+        this.toggleCard();
       });
     },
 
-    toggleCard(){
-      this.isLogin=!this.isLogin
-    }
+    toggleCard() {
+      this.isLogin = !this.isLogin;
+    },
   },
 };
 </script>

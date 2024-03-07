@@ -11,6 +11,7 @@ box-sizing: border-box;
 }
 body{
   overflow-x: hidden;
+  /* transition: all 1s; */
 }
 
 /* 自定义滚动条样式 */

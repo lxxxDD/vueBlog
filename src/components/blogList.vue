@@ -15,7 +15,7 @@
             {{ i.title }}
           </span>
           <span class="userImg">
-          <img :src="i.user.imgUrl" alt="...">
+          <img :src="$BASEURL+i.user.imgUrl" >
           </span>
         </header>
         <section class="modal-container-body rtf" v-html="i.content"></section>
@@ -186,9 +186,16 @@ a {
   flex: 1;
 }
 .userImg {
+
   flex: 3;
   display: flex;
   justify-content: flex-end;
+  
+}
+.userImg img{
+width: 30%;
+height: 30%;
+border-radius: 100%;
 }
 .modal-container-body {
   /* overflow: hidden; */

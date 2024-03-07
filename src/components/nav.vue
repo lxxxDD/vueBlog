@@ -1,4 +1,6 @@
 <template>
+
+   
   <div id="nav" :class="{ fixed: this.isFixed }" @mouseover="isFixed2=true" @mouseout="isFixed2=false">
     <div class="logo">Dream</div>
 
@@ -66,11 +68,10 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script>
-import {} from '@/request/api/home'
-import router from '@/router';
 export default {
   name: "AppNav",
 
@@ -95,7 +96,7 @@ export default {
   methods: {
     handleScroll() {
       // console.log(window.scrollY);
-      const twentyPercentHeight = window.innerHeight * 0.5; // 计算页面高度的20%
+      const twentyPercentHeight = window.innerHeight * 3; // 计算页面高度的20%
       if (window.scrollY > 50) {
         this.isFixed = true;
       
@@ -137,6 +138,8 @@ export default {
   opacity: 0;
 }
 #nav {
+  /* position: sticky;
+  top: 0; */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -157,7 +160,7 @@ export default {
 .fixed {
   width: 100%;
   padding: 30px 50px;
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   background-color: rgba(255, 255, 255, 0.774);

@@ -4,60 +4,29 @@
     <div class="left">
       <!-- 头像 -->
       <div class="picture">
-
-        <div class="upload">
-            <el-upload
-              class="avatar-uploader"
-              action=""
-              :show-file-list="false"
-              :auto-upload="false"
-              :on-change="handleChangeUpload"
-            >
-              <img v-if="previewImg" :src="previewImg" class="avatar" />
-              
-              <span v-else>更换头像</span>
-            </el-upload>
-          </div>
-
-        <el-dialog
-          title="图片剪裁"
-          :visible.sync="isShowDialog"
-          class="crop-dialog"
-          width="70%"
+        <el-upload
+          class="avatar-uploader"
+          action=""
+          :show-file-list="false"
+          :auto-upload="false"
+          :on-change="handleChangeUpload"
         >
-      
-       
-
-          <div class="cropperBox">
-            <vue-cropper
-              ref="cropper"
-              :img="option.img"
-              :outputSize="option.size"
-              :outputType="option.outputType"
-              :info="true"
-              :full="option.full"
-              :canMove="option.canMove"
-              :canMoveBox="option.canMoveBox"
-              :original="option.original"
-              :autoCrop="option.autoCrop"
-              :fixed="option.fixed"
-              :fixedNumber="option.fixedNumber"
-              :centerBox="option.centerBox"
-              :infoTrue="option.infoTrue"
-              :fixedBox="option.fixedBox"
-              :autoCropWidth="option.autoCropWidth"
-              :autoCropHeight="option.autoCropHeight"
-              @cropMoving="cropMoving"
-            />
-            <div class="imgPreview">
-              <img  :src="previewImg" alt="">
-            </div>
+          <div
           
+            style="
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              font-size: 10rem;
+              opacity: 0;
+            "
+          >
+            +
           </div>
-
-          <el-button @click="finish">裁剪</el-button>
-         
-        </el-dialog>
+          <img :src="$BASEURL +imageUrl" v-if="imageUrl"  style="aspect-ratio: 1/1; width: 100%;height: 100%;">
+          <img  v-else  style="aspect-ratio: 1/1; width: 100%;height: 100%;">
+        </el-upload>
       </div>
       <!-- 头像end -->
       <div class="userName">{{ userInfo.username }}</div>
@@ -66,11 +35,75 @@
     <!-- 右边 -->
     <div class="right"></div>
     <!-- 右边end -->
+
+    <el-dialog
+      title="图片剪裁"
+      :visible.sync="isShowDialog"
+      class="crop-dialog"
+      width="80%"
+      :append-to-body="true"
+      @close="clearImgHandle"
+    >
+      <div class="cropperBox">
+        <vue-cropper
+          ref="cropper"
+          :img="option.img"
+          :outputSize="option.size"
+          :outputType="option.outputType"
+          :info="true"
+          :full="option.full"
+          :canMove="option.canMove"
+          :canMoveBox="option.canMoveBox"
+          :original="option.original"
+          :autoCrop="option.autoCrop"
+          :fixed="option.fixed"
+          :fixedNumber="option.fixedNumber"
+          :centerBox="option.centerBox"
+          :infoTrue="option.infoTrue"
+          :fixedBox="option.fixedBox"
+          :autoCropWidth="option.autoCropWidth"
+          :autoCropHeight="option.autoCropHeight"
+          @cropMoving="cropMoving"
+        />
+        <div class="imgPreview">
+          <img :src="previewImg" alt="" />
+        </div>
+      </div>
+      <div class="imgBtn">
+        <el-button @click="finish"
+          ><i class="el-icon-crop"></i>裁剪</el-button
+        >
+        <el-button @click="changeScaleHandle(-10)"
+          ><i class="el-icon-zoom-in"></i>缩小</el-button
+        >
+        <el-button @click="changeScaleHandle(+10)"
+          ><i class="el-icon-zoom-out"></i> 放大</el-button
+        >
+        <el-button @click="rotateLeftHandle"
+          ><i class="el-icon-refresh-left"></i> 左旋转</el-button
+        >
+        <el-button @click="rotateRightHandle"
+          >右旋转<i class="el-icon-refresh-right"></i
+        ></el-button>
+        <el-button
+          @click="downloadHandle"
+          v-show="previewImg"
+          type="success"
+          plain
+          ><i class="el-icon-download"></i>下载</el-button
+        >
+        <el-button @click="submitImg" v-show="previewImg" icon="el-icon-upload"
+          >上传</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+
 import { VueCropper } from "vue-cropper";
+import { uploadImgs, updateUrl } from "@/request/api/uploadImg";
 export default {
   name: "userInfo",
   components: {
@@ -81,7 +114,9 @@ export default {
       userInfo: {},
       isShowDialog: false,
       imageUrl: "",
+   
       previewImg: "", // 预览图片地址
+      uploadImg: null, // 上传图片
       // 裁剪组件的基础配置option
       option: {
         img: "https://pic1.zhimg.com/80/v2-366c0aeae2b4050fa2fcbfc09c74aad4_720w.jpg", // 裁剪图片的地址
@@ -91,8 +126,8 @@ export default {
         canScale: true, // 图片是否允许滚轮缩放
         autoCrop: true, // 是否默认生成截图框
         canMoveBox: true, // 截图框能否拖动
-        autoCropWidth: 250, // 默认生成截图框宽度
-        autoCropHeight: 250, // 默认生成截图框高度
+        autoCropWidth: 200, // 默认生成截图框宽度
+        autoCropHeight: 200, // 默认生成截图框高度
         fixedBox: true, // 固定截图框大小 不允许改变
         fixed: true, // 是否开启截图框宽高固定比例
         fixedNumber: [1, 1], // 截图框的宽高比例
@@ -103,6 +138,15 @@ export default {
       },
       // 防止重复提交
       loading: false,
+      putdata: {
+        userId: 0,
+        username: "string",
+        password: "string",
+        imgUrl: "string",
+        email: "string",
+        createdAt: "2024-03-06T12:18:58.690Z",
+        
+      },
     };
   },
 
@@ -114,6 +158,7 @@ export default {
     getUserInfo() {
       this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
       console.log(this.userInfo);
+      this.imageUrl=this.userInfo.imgUrl
     },
 
     // 上传按钮 限制图片大小和类型
@@ -139,6 +184,43 @@ export default {
         this.isShowDialog = true;
       });
     },
+    //上传
+    submitImg() {
+  
+      uploadImgs(this.uploadImg)
+        .then((res) => {
+          
+
+          if (res.status == 200) {
+            this.$message.success("更换头像成功");
+            this.isShowDialog = false;
+            console.log(this.url, "上传参数");
+            // 获取到后端图片路径后 再使用这个接口改用户头像地址 报错？？
+            this.putdata.userId=this.userInfo.userId
+            this.putdata.imgUrl=res.data.msg
+            console.log(this.putdata,11515);
+            this.upUrl();
+          }
+        })
+        .catch((res) => {
+          this.$message.error("上传失败");
+        });
+    },
+
+    upUrl() {
+      // 发送请求
+      updateUrl(this.putdata).then((res) => {
+        if(res.status==200){
+        
+        console.log(res.data,'更改图片路径成功');
+        this.imageUrl=res.data.imgUrl
+
+        localStorage.setItem("userInfo", JSON.stringify(res.data));
+        }
+   
+      });
+    },
+
     // 放大/缩小
     changeScaleHandle(num) {
       num = num || 1;
@@ -155,7 +237,7 @@ export default {
     // 下载
     downloadHandle(type) {
       let aLink = document.createElement("a");
-      aLink.download = "author-img";
+      aLink.download = "DreamBlogImg";
       if (type === "blob") {
         this.$refs.cropper.getCropBlob((data) => {
           let downImg = window.URL.createObjectURL(data);
@@ -173,6 +255,7 @@ export default {
     // 清理图片
     clearImgHandle() {
       this.option.img = "";
+      this.previewImg = "";
     },
     // 截图框移动回调函数
     cropMoving(data) {
@@ -184,9 +267,11 @@ export default {
       // 获取截图的 blob 数据
       this.$refs.cropper.getCropBlob((blob) => {
         this.loading = true;
-        this.dialogVisible = false;
+        // this.isShowDialog = false;
+        const file = this.blobToFile(blob, "croppedImage.png"); // 将Blob对象转换为文件对象
+        this.uploadImg = file; // 将文件对象赋值给uploadImg
+        console.log("裁剪之后", blob);
         this.previewImg = URL.createObjectURL(blob);
-
         this.isPreview = true;
       });
       // 获取截图的 base64 数据
@@ -194,14 +279,18 @@ export default {
       //     console.log(data)
       // })
     },
+    // 将Blob对象转换为File对象
+    blobToFile(blob, fileName) {
+      const file = new File([blob], fileName, { type: blob.type });
+      return file;
+    },
   },
 };
 </script>
 
 <style scoped>
-
-.crop-dialog{
-display: flex;
+.crop-dialog {
+  display: flex;
 }
 
 .vue-cropper {
@@ -216,24 +305,30 @@ display: flex;
 }
 .imgPreview {
   /* flex: 1; */
-  /* border: 1px solid #555; */
+
   margin: 0 5px;
-flex: 1;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.imgPreview::after{
-  content: '预览';
+.imgPreview::after {
+  content: "预览";
   display: block;
   position: absolute;
-  /* top: 50%; */
-  /* left: 50%; */
-  transform: translate(-50%,-50%);
+  /* top: 0;
+  left: 0; */
+  transform: translate(0, -50%);
 }
 
-.imgPreview img{
+.imgPreview img {
   border-radius: 100%;
+  border: 1px solid #555;
+}
+.imgBtn {
+  display: flex;
+  /* justify-content: space-between; */
+  margin-top: 50px;
 }
 .BOX {
   width: 80%;
@@ -256,28 +351,25 @@ flex: 1;
 .picture {
   /* 1/1 */
   aspect-ratio: 1/1;
-  background-color: #555;
+  background-color: #d90505;
   border-radius: 100%;
   overflow: hidden;
+  position: relative;
 }
-.upload{
-  aspect-ratio: 1/1;
+
+.avatar-uploader {
+background-color: #a5a5a5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+ height: 100%;
+ width: 100%;
+
   /* background-color: red; */
-  border-radius: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.avatar-uploader{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
   /* opacity: 0; */
 }
-.avatar-uploader img{
-  aspect-ratio: 1/1;
-}
+
 /* 名字 */
 .userName {
   display: flex;

@@ -3,7 +3,7 @@ import api from "@/request/request"
 export function login(data){
   
     return api({
-        url:'/Users/Login',
+        url:'/api/Users/Login',
         method:'post',
         data
     })
@@ -12,11 +12,13 @@ export function login(data){
 // 注册
 export function Register(data){
     return api({
-        url:'/Users/Register',
+        url:'/api/Users/Register',
         method:'post',
         data
     })
 }
+
+
 
 
 
