@@ -10,6 +10,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 import "animate.css"
 import "wowjs/css/libs/animate.css"// 巨坑... 此地方要引入两个css
 import wow from 'wowjs'
+
+
+
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(wow);

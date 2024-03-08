@@ -1,5 +1,8 @@
 <template>
   <div class="BOX">
+   <div class="showBox" style="width: 100%;  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; "  v-if="list.length>0">
     <div
       class="modal wow slideInLeft"
       v-for="i in list"
@@ -32,6 +35,11 @@
           <button class="button is-primary">详情</button>
         </footer>
       </article>
+    </div>
+  </div>
+ 
+    <div class="loading" v-else style="height: 500px; display: flex; justify-content: center; align-items: center;">
+      <bookLoading></bookLoading>
     </div>
   </div>
 </template>
@@ -110,9 +118,7 @@ export default {
 
 <style  scoped>
 .BOX {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start; /* 保证每行元素间距均匀 */
+ 
 }
 
 /*卡片 */
@@ -129,6 +135,7 @@ a {
 .modal {
   flex-basis: calc(33.33% - 20px); /* 计算每个卡片的宽度，减去 margin */
   margin-bottom: 100px; /* 设置卡片之间的垂直间距 */
+
 }
 
 .modal-container {
@@ -383,4 +390,5 @@ border-radius: 100%;
 .icon-button:focus {
   background-color: #dfdad7;
 }
+
 </style>

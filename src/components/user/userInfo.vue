@@ -2,7 +2,7 @@
   <div class="BOX">
     <!-- 左边 -->
     <div class="left">
-      <!-- 头像 -->
+      <!-- 头像 --> <div>
       <div class="picture">
         <el-upload
           class="avatar-uploader"
@@ -22,19 +22,45 @@
               opacity: 0;
             "
           >
-          
+
             +
           </div>
           <img :src="$BASEURL +imageUrl" v-if="imageUrl"  style="aspect-ratio: 1/1; width: 100%;height: 100%;">
-          <img  v-else  style="aspect-ratio: 1/1; width: 100%;height: 100%;">
-        </el-upload>
+         
+          <el-image v-else>
+      <div slot="error" class="image-slot">
+        <i class="el-icon-user"  style="font-size: 100px;"></i>
       </div>
-      <!-- 头像end -->
+    </el-image>
+        </el-upload>
+       
+      </div>
       <div class="userName">{{ userInfo.username }}</div>
+     </div>
+      <!-- 头像end -->
+  <div class="updateUserInfoBox">
+    
+    <div style=" max-width: 100%;
+    max-height: 100%;   word-wrap: break-word;"><span class="userInfoText">📫Email:</span> <br><span class="userInfoTextNUM">{{ userInfo.email }}</span>  </div>
+    <div>🔐<span class="userInfoText">Password:</span>
+      <br>
+      <span class="userInfoTextNUM"> {{ userInfo.password }}</span></div>
+      <el-button type="warning" plain style="font-size: 1vw; margin-top: 150px;"><span >🚧🚧修改信息🚧🚧</span></el-button>
+  </div>
     </div>
     <!-- 左边end -->
     <!-- 右边 -->
-    <div class="right"></div>
+    <div class="right">
+      <div class="right_a">
+        <div class="right_a_text1">
+          加入<span class="right_a_logo">Dream</span>共<span class="right_a_logo">{{ days }}</span>天啦~
+        </div>
+    <div class="right_a_text2">共发布文章 <span  class="right_a_num">{{ UserBlogTotal!="1"?UserBlogTotal.totalPosts:0 }}</span>获得点赞
+      <span class="right_a_num"> {{ UserBlogTotal!="1"?UserBlogTotal.totalLikes:0 }}</span>观看次数<span  class="right_a_num">{{ UserBlogTotal!="1"?UserBlogTotal.totalViews:0 }}</span></div>
+      
+      </div>
+      <div class="right_b">2</div>
+    </div>
     <!-- 右边end -->
 
     <el-dialog
@@ -98,6 +124,8 @@
         >
       </div>
     </el-dialog>
+
+
   </div>
 </template>
 
@@ -105,6 +133,7 @@
 
 import { VueCropper } from "vue-cropper";
 import { uploadImgs, updateUrl } from "@/request/api/uploadImg";
+import { GetUserBlogPost } from "@/request/api/home";
 export default {
   name: "userInfo",
   components: {
@@ -115,12 +144,13 @@ export default {
       userInfo: {},
       isShowDialog: false,
       imageUrl: "",
-   
+      days:null,
+      UserBlogTotal:{},
       previewImg: "", // 预览图片地址
       uploadImg: null, // 上传图片
       // 裁剪组件的基础配置option
       option: {
-        img: "https://pic1.zhimg.com/80/v2-366c0aeae2b4050fa2fcbfc09c74aad4_720w.jpg", // 裁剪图片的地址
+        img: "", // 裁剪图片的地址
         info: true, // 裁剪框的大小信息
         outputSize: 1, // 裁剪生成图片的质量
         outputType: "png", // 裁剪生成图片的格式
@@ -152,14 +182,38 @@ export default {
   },
 
   mounted() {
+
     this.getUserInfo();
   },
 
   methods: {
+islogin(){
+  let obj=JSON.parse(localStorage.getItem("userInfo")) ||0
+if(obj){
+
+}else{
+
+}
+},
+
     getUserInfo() {
       this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
       console.log(this.userInfo);
       this.imageUrl=this.userInfo.imgUrl
+      GetUserBlogPost(this.userInfo.userId).then(res=>{
+        this.UserBlogTotal=res.data
+      
+        // 用户创建的时间
+const userCreationTime = new Date(this.userInfo.createdAt);
+// 当前时间
+const now = new Date();
+// 计算时间间隔（毫秒数）
+const timeDiff = now.getTime() - userCreationTime.getTime();
+// 将毫秒数转换为天数
+this.days = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+console.log(`从用户创建时间到现在已经过了 ${this.days} 天。`);
+      })
     },
 
     // 上传按钮 限制图片大小和类型
@@ -333,21 +387,30 @@ export default {
 }
 .BOX {
   width: 80%;
-  background-color: wheat;
+  /* background-color: wheat; */
   height: 100vh;
   margin: 0 auto;
   display: flex;
-  padding: 50px;
+  padding: 10px;
 }
 .left {
   /* border: 1px solid #000; */
   height: 100%;
   width: 20%;
+  padding: 20px;
+   background-color: #F0F0F0F0;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+
 }
 .right {
   /* border: 1px solid #e80000; */
   height: 100%;
   width: 80%;
+  padding: 30px;
+  /* display: flex; */
+
 }
 .picture {
   /* 1/1 */
@@ -359,14 +422,14 @@ export default {
 }
 
 .avatar-uploader {
-background-color: #a5a5a5;
+  background-color: #F0F0F0F0;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
- height: 100%;
- width: 100%;
-
+ height: auto;
+ width: auto;
+ aspect-ratio: 1/1 !important;
   /* background-color: red; */
   /* opacity: 0; */
 }
@@ -374,10 +437,82 @@ background-color: #a5a5a5;
 /* 名字 */
 .userName {
   display: flex;
-  font-size: 3rem;
+  font-size: 2vw;
   color: #555;
   justify-content: center;
   align-items: center;
   height: 20%;
+  color: #750550;
+  font-family:"微软雅黑";
+
 }
+.updateUserInfoBox{
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-around; */
+  align-items: flex-start;
+ position: relative;
+ min-height: 50%;
+
+}
+.updateUserInfoBox>div{
+  margin: 20px 0;
+}
+.updateUserInfoBox_btn{
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+}
+
+.right_a{
+  /* border: 1px solid #555; */
+  height: 30%;
+  background-color: #F0F0F0F0;
+  padding: 1vw;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.right_a_logo{
+  color: #750550;
+  font-family:"Crotah free version";
+  font-size: 4.5vw;
+  margin: 0 20px;
+}
+.right_a_text1{
+  font-size: 2vw;
+}
+.right_a_text2{
+  font-size: 1vw;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.right_a_num{
+  font-size: 3.5vw;
+  font-family:"Crotah free version";
+  color:darkorange;
+  margin: 0 10px;
+}
+.right_b{
+  /* border: 1px solid #555; */
+  height: 70%;
+  margin-top: 20px;
+  background-color: #F0F0F0F0;
+}
+
+.userInfoText{
+  font-family:"Crotah free version";
+  font-size: 1vw;
+  color: #555;
+
+}
+.userInfoTextNUM{
+  font-family:"Crotah free version";
+  font-size: 1.5vw;
+  color: darksalmon;
+}
+
 </style>

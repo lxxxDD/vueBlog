@@ -1,9 +1,8 @@
 <template>
 
-   
-  <div id="nav" :class="{ fixed: this.isFixed }" @mouseover="isFixed2=true" @mouseout="isFixed2=false">
-    <div class="logo">Dream</div>
 
+  <div id="nav" :class="{ fixed: isFixed}" @mouseover="isFixed2=true" @mouseout="isFixed2=false" >
+    <div class="logo">Dream</div>
     <div class="rightBox" >
    
       <div class="search">
@@ -47,10 +46,8 @@
       <div class="el-dropdown-link UserImgBox">
        
       </div>
-      <el-dropdown-menu slot="dropdown"   >
-        <div style="text-align: center;padding: 0 10px;">
-        <span style="border-bottom: 1px solid #555555a3; width: 100%;  display: block;">{{ userInfo.username }}</span>
-        </div>
+      <el-dropdown-menu slot="dropdown"    >
+      
         <el-dropdown-item >  <el-button icon="el-icon-user-solid"  @click="$router.push('/userInfo')" type="text" style="width: 100%;"  >个人中心</el-button></el-dropdown-item>
         <el-dropdown-item>  <el-button icon="el-icon-s-order"  type="text" style="width: 100%;"  @click="$router.push('/myBloglist')">我的文章</el-button></el-dropdown-item>
         <el-dropdown-item   >
@@ -68,7 +65,7 @@
       </div>
     </div>
   </div>
-  
+
 </template>
 
 <script>
@@ -132,10 +129,11 @@ export default {
 <style  scoped>
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: all .5s ease;
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+  /* transform: translateY(-100%); */
 }
 #nav {
   /* position: sticky;
@@ -145,7 +143,7 @@ export default {
   justify-content: space-between;
   width: 100%;
   padding: 30px 80px;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   transition: all .5s;
   border-bottom:1px solid  #54545410;
   
@@ -165,13 +163,13 @@ export default {
   left: 0;
   background-color: rgba(255, 255, 255, 0.774);
   transition: all .5s;
-  z-index: 9999999999999999;
+  z-index: 9999999;
  
 }
 .logo {
   font-size: 3rem;
   color: #750550;
-  font-family:"f Far Alone";
+  font-family:"Crotah free version";
 
 }
 .rightBox {
@@ -196,7 +194,7 @@ export default {
   top: 50%;
   z-index: 9999;
   transform: translate(100%,-50%);
-  background-color: #fff;
+  /* background-color: #fff; */
   padding-right: 5%;
   transition: all .5s;
 }
