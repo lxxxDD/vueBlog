@@ -24,12 +24,12 @@
         <section class="modal-container-body rtf" v-html="i.content"></section>
         <footer class="modal-container-footer">
           <button class="button is-ghost">
-            {{ i.views == null ? 0 : i.views }}
+            {{ i.views == null ? 0 :  formatNumber(i.views ) }}
             <span style="color: #000">👁‍🗨</span>
           </button>
 
           <button class="button is-ghost">
-            {{ i.likes == null ? 0 : i.likes }}
+            {{ i.likes == null ? 0 : formatNumber(i.likes ) }}
             <span style="color: #000">💜</span>
           </button>
           <button class="button is-primary">详情</button>
@@ -112,14 +112,26 @@ export default {
         return "体育";
       }
     },
+
+     formatNumber(num) {
+  if (num >= 1000 && num < 10000) {
+    return (num / 1000).toFixed(1) + 'K';
+  } else if (num >= 10000) {
+    return (num / 10000).toFixed(1) + 'W';
+  } else {
+    return num.toString();
+  }
+}
+
+
   },
 };
 </script>
 
 <style  scoped>
-.BOX {
+/* .BOX {
  
-}
+} */
 
 /*卡片 */
 .button,

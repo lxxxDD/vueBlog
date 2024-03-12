@@ -17,6 +17,16 @@ export function Register(data){
         data
     })
 }
+//修改用户
+export function PutUser(data){
+    return api({
+        url:'/api/Users/PutUser',
+        method:'put',
+        data
+    })
+}
+
+
 
 
 

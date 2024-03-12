@@ -44,7 +44,7 @@
     
         <el-dropdown :hide-on-click="false"   v-else  >
       <div class="el-dropdown-link UserImgBox">
-       
+       <img :src="$BASEURL+userInfo.imgUrl" alt="" width="100%" style="border-radius: 100%;">
       </div>
       <el-dropdown-menu slot="dropdown"    >
       
@@ -150,7 +150,8 @@ export default {
 
 }
 .UserImgBox{
-  background-color: #750550;
+  background-color: darkorchid;
+
   height: 50px;
   width: 50px;
   border-radius: 50%;
@@ -168,7 +169,7 @@ export default {
 }
 .logo {
   font-size: 3rem;
-  color: #750550;
+  color: var(--Maintextcolor);
   font-family:"Crotah free version";
 
 }

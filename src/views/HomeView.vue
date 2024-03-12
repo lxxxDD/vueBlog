@@ -6,7 +6,7 @@
       <h3 class="medium">{{ item }}</h3>
     </el-carousel-item>
   </el-carousel>
-  <div class="haea" v-if="list.length>0">Hot热门小文章</div>
+  <div class="haea" v-if="list.length>0"><span>Blog</span></div>
     <blogList :list="list"></blogList>
     <bookLoading v-show="isLoading && total !== list.length"></bookLoading>
   </div>
@@ -106,6 +106,30 @@ export default {
 </script>
 
 <style scoped>
+.haea {
+  /* text-align: center; */
+  padding: 20px;
+  font-size: 2.5rem;
+  position: relative;
+  font-family:"Crotah free version";
+  /* margin-bottom:50px; */
+
+}
+.haea>span{
+  /* border-bottom: 1px solid #999999a3; */
+  /* padding: 0 100px; */
+  padding-bottom: 20px;
+  padding-left: 5%;
+}
+.haea>span::after{
+  content: 'Hot';
+  color: #ff3333;
+  font-family:"Crotah free version";
+  font-size: 1rem;
+  position: absolute;
+  top: 20%;
+}
+
   .el-carousel__item h3 {
     color: #475669;
     font-size: 14px;

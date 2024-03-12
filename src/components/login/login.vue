@@ -77,14 +77,18 @@
         </label>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
 import { login, Register } from "@/request/api/login";
+
 export default {
   name: "login",
-
+components:{
+  
+},
   data() {
     return {
       isLogin: false,

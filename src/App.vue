@@ -4,6 +4,10 @@
   </div>
 </template>
 <style>
+/* #app{
+  
+  background-color: #000000;
+} */
 *{
 margin: 0;
 padding: 0;
@@ -34,5 +38,19 @@ body::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.5); /* 滚动条手柄颜色 */
   border-radius: 5px; /* 滚动条手柄圆角 */
 }
+
+/* @keyframes in-circle-swoop {
+  from {
+    clip-path: var(--circle-top-right-out);
+  }
+  to {
+    clip-path: var(--circle-bottom-right-in);
+  }
+}
+
+[transition-style="in:custom:circle-swoop"] {
+  --transition__duration: 5s;
+  animation-name: in-circle-swoop;
+} */
 </style>
 
