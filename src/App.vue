@@ -16,6 +16,7 @@ box-sizing: border-box;
 body{
   overflow-x: hidden;
   /* transition: all 1s; */
+  /* background: #1f1f1f; */
 }
 
 /* 自定义滚动条样式 */

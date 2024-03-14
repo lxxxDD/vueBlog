@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import AppNav from './components/nav.vue'
 import bookLoading from './components/loading/bookLoading.vue'
+import backToTop from './components/backToTop/backTop.vue'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import "animate.css"
@@ -16,6 +17,7 @@ Vue.use(ElementUI);
 Vue.use(wow);
 Vue.component('AppNav', AppNav);
 Vue.component('bookLoading', bookLoading);
+Vue.component('backToTop', backToTop);
 Vue.prototype.$BASEURL = 'http://localhost:5297/';
 new Vue({
   router,

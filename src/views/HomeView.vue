@@ -9,6 +9,9 @@
   <div class="haea" v-if="list.length>0"><span>Blog</span></div>
     <blogList :list="list"></blogList>
     <bookLoading v-show="isLoading && total !== list.length"></bookLoading>
+<transition name="fade">
+    <backToTop @scrollToTop="scrollToTop" v-show="showButton"></backToTop>
+        </transition>
   </div>
 </template>
 
@@ -28,7 +31,7 @@ export default {
       addNum: 0,
       isLoading: false,
       tiemOut: null,
-
+      showButton:false,
       total: 0,
       title: "",
     };
@@ -36,14 +39,30 @@ export default {
 
   mounted() {
     this.getList();
+    window.addEventListener("scroll", this.handleScroll);
     window.addEventListener("scroll", this.scrollBottmo);
   },
   beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll);
     window.removeEventListener("scroll", this.scrollBottmo);
     clearTimeout(this.tiemOut);
   },
 
   methods: {
+
+    handleScroll() {
+      // 当滚动位置超过页面底部200px时显示按钮
+       
+       this.showButton = window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000;
+
+       console.log(window.innerHeight + window.scrollY >= document.body.offsetHeight - 200);
+    },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth" // 平滑滚动
+      });
+    },
     getList() {
       GetBlogPosts({
         addNum: this.addNum,
@@ -83,6 +102,7 @@ export default {
             }
           }, 800);
         } else {
+         
           // 没有更多数据可加载，不需要发起请求
           console.log("没有更多数据可加载");
         }
@@ -106,6 +126,15 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}
 .haea {
   /* text-align: center; */
   padding: 20px;

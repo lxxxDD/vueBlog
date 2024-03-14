@@ -1,5 +1,5 @@
 <template>
-  <div class="BOX">
+  <div class="BOX" v-if="list">
    <div class="showBox" style="width: 100%;  display: flex;
   flex-wrap: wrap;
   justify-content: flex-start; "  v-if="list.length>0">
@@ -17,7 +17,7 @@
           <span class="modal-container-title">
             {{ i.title }}
           </span>
-          <span class="userImg">
+          <span class="userImg" >
           <img :src="$BASEURL+i.user.imgUrl" >
           </span>
         </header>
@@ -156,7 +156,9 @@ a {
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
-  background-color: #fff;
+  background-color: var(--卡片颜色);
+  box-shadow: 0 0 10px 10px #fff;
+  color: var(--卡片字体);
   border-radius: 16px;
   overflow: hidden;
   display: flex;

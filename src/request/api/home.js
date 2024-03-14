@@ -44,3 +44,16 @@ export function GetUserBlogPostlist(id) {
     )
 }
 
+// 获取用户单篇文章
+export function GetBlogPost(id) {
+    console.log(id);
+    return api(
+        {
+            method: 'GET',
+            url: '/api/BlogPosts/GetBlogPost?id='+id,
+            
+        }
+    )
+}
+
+

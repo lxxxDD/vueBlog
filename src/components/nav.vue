@@ -42,7 +42,7 @@
       <div class="btn" :class="{btnFill:isFixed||isFixed2}">
         <el-button type="success"  @click="$router.push('/login')" plain v-if="userInfo==null">去登录</el-button>
     
-        <el-dropdown :hide-on-click="false"   v-else  >
+        <el-dropdown trigger="click"  v-else  >
       <div class="el-dropdown-link UserImgBox">
        <img :src="$BASEURL+userInfo.imgUrl" alt="" width="100%" style="border-radius: 100%;">
       </div>
