@@ -1,44 +1,96 @@
 <template>
   <div class="BOX" v-if="list">
-   <div class="showBox" style="width: 100%;  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start; "  v-if="list.length>0">
     <div
-      class="modal wow slideInLeft"
-      v-for="i in list"
-      :key="i.postId"
-      data-wow-delay="1s"
+      class="showBox"
+      style="
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      "
+      v-if="list.length > 0"
     >
-      <article class="modal-container">
-        <header class="modal-container-header">
-          <span class="Ctag">
-            {{ getCname(i.categoryId) }}
-          </span>
-          <span class="modal-container-title">
-            {{ i.title }}
-          </span>
-          <span class="userImg" >
-          <img :src="$BASEURL+i.user.imgUrl" >
-          </span>
-        </header>
-        <section class="modal-container-body rtf" v-html="i.content"></section>
-        <footer class="modal-container-footer">
-          <button class="button is-ghost">
-            {{ i.views == null ? 0 :  formatNumber(i.views ) }}
-            <span style="color: #000">👁‍🗨</span>
-          </button>
+      <div
+        class="modal wow slideInLeft"
+        v-for="i in list"
+        :key="i.postId"
+        data-wow-delay="1s"
+      >
+        <article class="modal-container">
+          <header class="modal-container-header">
+            <span class="Ctag">
+              <img src="@/assets/科技.png" alt="" v-if="i.categoryId == 1" />
+              <img src="@/assets/生活.png" alt="" v-if="i.categoryId == 2" />
+              <img src="@/assets/旅游.png" alt="" v-if="i.categoryId == 3" />
+              <img src="@/assets/健康.png" alt="" v-if="i.categoryId == 4" />
+              <img src="@/assets/娱乐.png" alt="" v-if="i.categoryId == 5" />
+              <img src="@/assets/教育.png" alt="" v-if="i.categoryId == 6" />
+              <img src="@/assets/美食.png" alt="" v-if="i.categoryId == 7" />
+              <img src="@/assets/体育.png" alt="" v-if="i.categoryId == 8" />
+              <span
+                class="ctagText"
+                :style="`color: ${getColor(i.categoryId)};`"
+                >{{ getCname(i.categoryId) }}</span
+              >
+            </span>
+            <span class="modal-container-title">
+              {{ i.title }}
+            </span>
+            <span class="userImg">
+              <img :src="$BASEURL + i.user.imgUrl" v-if="i.user.imgUrl" />
 
-          <button class="button is-ghost">
-            {{ i.likes == null ? 0 : formatNumber(i.likes ) }}
-            <span style="color: #000">💜</span>
-          </button>
-          <button class="button is-primary">详情</button>
-        </footer>
-      </article>
+              <el-skeleton
+                animated
+                v-else
+                style="aspect-ratio: 1/1; border-radius: 100%;"
+              >
+                <template slot="template">
+                  <el-skeleton-item
+                    variant="image"
+                
+                    style="aspect-ratio: 1/1; transform: scale(2);"
+                  />
+                </template>
+              </el-skeleton>
+            </span>
+          </header>
+          <section
+            class="modal-container-body rtf"
+            v-html="i.content"
+          ></section>
+          <footer class="modal-container-footer">
+            <button class="button is-ghost">
+              {{ i.views == null ? 0 : formatNumber(i.views) }}
+              <span style="color: #000">👁‍🗨</span>
+            </button>
+
+            <button class="button is-ghost">
+              {{ i.likes == null ? 0 : formatNumber(i.likes) }}
+              <span style="color: #000">💜</span>
+            </button>
+            <button
+              @click="
+               xq(i)
+              "
+              class="button is-primary"
+            >
+              详情
+            </button>
+          </footer>
+        </article>
+      </div>
     </div>
-  </div>
- 
-    <div class="loading" v-else style="height: 500px; display: flex; justify-content: center; align-items: center;">
+
+    <div
+      class="loading"
+      v-else
+      style="
+        height: 500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
       <bookLoading></bookLoading>
     </div>
   </div>
@@ -46,6 +98,7 @@
 
 <script>
 import { WOW } from "wowjs";
+import {setView} from '@/request/api/home'
 export default {
   name: "blogList",
   props: {
@@ -93,6 +146,15 @@ export default {
   },
 
   methods: {
+    xq(i){
+      setView(i.postId).then(res=>{
+        console.log(res.data);
+      }).catch(err=>{})
+      this. $router.push({
+                  name: 'detailPage',
+                  query: { id: i.postId },
+                })
+    },
     getCname(i) {
       if (i == 1) {
         return "科技";
@@ -112,18 +174,37 @@ export default {
         return "体育";
       }
     },
-
-     formatNumber(num) {
-  if (num >= 1000 && num < 10000) {
-    return (num / 1000).toFixed(1) + 'K';
-  } else if (num >= 10000) {
-    return (num / 10000).toFixed(1) + 'W';
-  } else {
-    return num.toString();
-  }
-}
-
-
+    getColor(i) {
+      switch (i) {
+        case 1:
+          return "#3366CC"; // 科学: 深蓝色
+        case 2:
+          return "#33CC33"; // 生活: 绿色
+        case 3:
+          return "#FF9900"; // 旅游: 橙色
+        case 4:
+          return "#9933CC"; // 健康: 紫色
+        case 5:
+          return "#FF3333"; // 娱乐: 红色
+        case 6:
+          return "#FFCC00"; // 教育: 黄色
+        case 7:
+          return "#CC6633"; // 美食: 棕色
+        case 8:
+          return "#3399FF"; // 体育: 淡蓝色
+        default:
+          return "#000000"; // 默认颜色
+      }
+    },
+    formatNumber(num) {
+      if (num >= 1000 && num < 10000) {
+        return (num / 1000).toFixed(1) + "K";
+      } else if (num >= 10000) {
+        return (num / 10000).toFixed(1) + "W";
+      } else {
+        return num.toString();
+      }
+    },
   },
 };
 </script>
@@ -147,9 +228,20 @@ a {
 .modal {
   flex-basis: calc(33.33% - 20px); /* 计算每个卡片的宽度，减去 margin */
   margin-bottom: 100px; /* 设置卡片之间的垂直间距 */
-
+}
+/* 在窄屏幕上只显示两个卡片 */
+@media screen and (max-width: 768px) {
+  .modal {
+    flex-basis: calc(50% - 20px); /* 计算每个卡片的宽度，减去 margin */
+  }
 }
 
+/* 在更窄的屏幕上只显示一个卡片 */
+@media screen and (max-width: 480px) {
+  .modal {
+    flex-basis: calc(100% - 20px); /* 计算每个卡片的宽度，减去 margin */
+  }
+}
 .modal-container {
   transition: 1s all;
   max-height: 500px;
@@ -205,18 +297,36 @@ a {
   height: 32px;
   color: #750550;
   flex: 1;
+  position: relative;
+  font-family: var(--almm);
+}
+.Ctag img {
+  width: 32px;
+  /* height: 32px; */
+  position: absolute;
+  opacity: 0.3;
+  transition: 0.3s;
+  top: 0;
+}
+
+.modal-container:hover .Ctag img {
+  opacity: 1;
+  top: -50%;
+  transition: 0.3s;
+}
+.modal-container:hover .Ctag .ctagText {
+  opacity: 0.1;
+  transition: 0.3s;
 }
 .userImg {
-
   flex: 3;
   display: flex;
   justify-content: flex-end;
-  
 }
-.userImg img{
-width: 30%;
-height: 30%;
-border-radius: 100%;
+.userImg img {
+  width: 30%;
+  height: 30%;
+  border-radius: 100%;
 }
 .modal-container-body {
   /* overflow: hidden; */
@@ -404,5 +514,4 @@ border-radius: 100%;
 .icon-button:focus {
   background-color: #dfdad7;
 }
-
 </style>

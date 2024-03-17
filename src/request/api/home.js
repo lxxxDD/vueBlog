@@ -22,7 +22,7 @@ export function GetBlogPostsTotal(params) {
 
 // 获取用户的所有文章点赞浏览
 export function GetUserBlogPostLikeAndViews(id) {
-    console.log(id);
+
     return api(
         {
             method: 'GET',
@@ -33,24 +33,49 @@ export function GetUserBlogPostLikeAndViews(id) {
 }
 
 // 获取用户的文章
-export function GetUserBlogPostlist(id) {
-    console.log(id);
+export function GetUserBlogPostlist(id,sort) {
+
     return api(
         {
             method: 'GET',
-            url: '/api/BlogPosts/GetUserBlogPostlist?uid='+id,
-            
+            url: '/api/BlogPosts/GetUserBlogPostlist',
+            params:{
+                uid:id,
+                sort
+            }
         }
     )
 }
 
 // 获取用户单篇文章
 export function GetBlogPost(id) {
-    console.log(id);
+
     return api(
         {
             method: 'GET',
             url: '/api/BlogPosts/GetBlogPost?id='+id,
+            
+        }
+    )
+}
+// 获取用户单篇文章
+export function setLike(id) {
+   
+    return api(
+        {
+            method: 'put',
+            url: '/api/BlogPosts/setLike?postId='+id,
+            
+        }
+    )
+}
+// 获取用户单篇文章
+export function setView(id) {
+   
+    return api(
+        {
+            method: 'put',
+            url: '/api/BlogPosts/setView?postId='+id,
             
         }
     )

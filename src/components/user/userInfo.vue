@@ -1,5 +1,9 @@
 <template>
-  <div class="BOX">
+  <div
+    :class="`BOX ${isSkeleton ? '' : 'hide'} ${
+      UserBlogList.length > 0 ? '' : 'hide'
+    }`"
+  >
     <!-- 左边 -->
     <div class="left wow animate__bounceIn">
       <!-- 头像 -->
@@ -43,15 +47,32 @@
             >
               +
             </div>
-            <img
+            <el-image
               :src="$BASEURL + imageUrl"
               v-if="imageUrl"
               style="aspect-ratio: 1/1; width: 100%; height: 100%"
             />
-
             <el-image v-else>
               <div slot="error" class="image-slot">
-                <i class="el-icon-user" style="font-size: 100px"></i>
+               
+               <el-skeleton
+         
+            style="
+              aspect-ratio: 1/1;
+              height: auto;
+              width: auto;
+              display: flex;
+              align-items: center;
+            "
+            animated
+          >
+            <template slot="template">
+              <el-skeleton-item
+                variant="image"
+                style="aspect-ratio: 1/1; width: 100%; height: 100%"
+              />
+            </template>
+          </el-skeleton>
               </div>
             </el-image>
           </el-upload>
@@ -81,10 +102,12 @@
             {{ userInfo.password }}</span
           >
           <span class="userInfoTextNUM">
-            <span v-show="!passwordShow">··· ··· ··· ···</span>
+            <span v-show="!passwordShow" style="user-select: none"
+              >··· ··· ··· ···</span
+            >
             <span style="cursor: pointer" @click="passwordShow = !passwordShow">
-              <span v-show="!passwordShow">🙄</span>
-              <span v-show="passwordShow">😎</span>
+              <span v-show="!passwordShow" style="user-select: none">🙄</span>
+              <span v-show="passwordShow" style="user-select: none">😎</span>
             </span></span
           >
         </div>
@@ -144,40 +167,115 @@
           }}</span>
         </div>
       </div>
-      <div class="right_b wow animate__zoomInUp" data-wow-delay="1s">
+      <div class="right_b wow animate__zoomInUp" data-wow-delay="0.5s">
         <el-skeleton animated v-show="!isSkeleton">
           <template slot="template">
-            <el-skeleton animated :rows="3" />
+            <div
+              style="
+                width: 100%;
+                height: 20px;
+                display: flex;
+                justify-content: flex-end;
+              "
+            >
+              <div
+                style="
+                  width: 30%;
+                  display: flex;
+                  justify-items: space-between;
+                  align-items: center;
+                "
+              >
+                <el-skeleton-item variant="text" style="margin-right: 16px" />
+                <el-skeleton-item variant="text" style="width: 30%" />
+              </div>
+            </div>
+
             <el-skeleton-item
               variant="crea"
               style="width: 100%; height: 300px"
             />
           </template>
         </el-skeleton>
-        <div class="block">
-          <el-timeline>
+        <div :class="`block ${togglexx(0)}` ">
+          <div class="srot" v-show="UserBlogList.length">
+            <div class="srot-btn">
+              <el-button
+                size="mini"
+                class="hot srotBtn"
+                @click="getUserBlogPostLstiFun(1)"
+                >最热</el-button
+              >
+              <el-button
+                size="mini"
+                class="new srotBtn"
+                @click="getUserBlogPostLstiFun(2)"
+                >最新</el-button
+              >
+              <el-button
+                size="mini"
+                class="default srotBtn"
+                @click="getUserBlogPostLstiFun(0)"
+                >默认</el-button
+              >
+            </div>
+          </div>
+       
+           <transition name="fade1">
+<div style="position: relative; display: flex; justify-content: center;" v-show="isqh">
+  <span style="
+  position: absolute;
+  top: 250px;
+  vertical-align: bottom;
+  font-size: 3vw;
+  font-family: var(--drfont);
+  color: var(--Maintextcolor);"> DreamBlog 
+
+  <span style="color: var(--淡黑井五);  font-size: 2vw; ">loading...</span>
+ </span>
+</div>
+</transition>
+         <!--动画 -->
+          <el-timeline v-if="UserBlogList.length > 0" :class="{tagg:isqh}">
             <el-timeline-item
-         
+            
               v-for="(item, index) in UserBlogList"
               :key="index"
+            
               :timestamp="item.createdAt"
               placement="top"
+             
             >
               <el-card
-           
+              @mouseover="checkHeight(index)" 
                 class="cardA"
                 :id="'card-' + index"
                 style="margin-bottom: 50px"
               >
-              <div class="head" style="height: 80px;; display: flex; align-items: center; ">
-                <span style="font-size: 2vw; flex: 2;"> {{ item.title }}</span>
-              <div style="flex: 1; position: relative; display: flex; height: 80px;  justify-content: flex-end; align-items: center; color: var(--淡黑井五); ">
-                <span class="categoryText" :style="`color: ${getColor(item.categoryId)} ` ">{{ getCname(item.categoryId) }}</span>
-              
-             
-              </div>
-              </div>
-               
+                <div
+                  class="head"
+                  style="height: 80px; display: flex; align-items: center"
+                >
+                  <span style="font-size: 2vw; flex: 2"> {{ item.title }}</span>
+                  <div
+                    style="
+                      flex: 1;
+                      position: relative;
+                      display: flex;
+                      height: 80px;
+                      justify-content: flex-end;
+                      align-items: center;
+                      color: var(--淡黑井五);
+                    "
+                  >
+                    <span
+                      class="categoryText"
+                      :style="`color: ${getColor(item.categoryId)} `"
+                      >{{ getCname(item.categoryId) }}</span
+                    >
+                  </div>
+                </div>
+
                 <div
                   :id="'content-' + index"
                   class="content-wrapper"
@@ -250,19 +348,74 @@
                   </div>
                 </div>
                 <div class="categoryBox">
-                  <img  src="@/assets/科技.png" alt="" v-if="item.categoryId==1">
-               <img  src="@/assets/生活.png" alt="" v-if="item.categoryId==2">
-               <img src="@/assets/旅游.png" alt="" v-if="item.categoryId==3">
-               <img  src="@/assets/健康.png" alt="" v-if="item.categoryId==4">
-               <img   src="@/assets/娱乐.png" alt="" v-if="item.categoryId==5">
-               <img  src="@/assets/教育.png" alt="" v-if="item.categoryId==6">
-               <img  src="@/assets/美食.png" alt="" v-if="item.categoryId==7">
-               <img  src="@/assets/体育.png" alt="" v-if="item.categoryId==8">
+                  <img
+                    src="@/assets/科技.png"
+                    alt=""
+                    v-if="item.categoryId == 1"
+                  />
+                  <img
+                    src="@/assets/生活.png"
+                    alt=""
+                    v-if="item.categoryId == 2"
+                  />
+                  <img
+                    src="@/assets/旅游.png"
+                    alt=""
+                    v-if="item.categoryId == 3"
+                  />
+                  <img
+                    src="@/assets/健康.png"
+                    alt=""
+                    v-if="item.categoryId == 4"
+                  />
+                  <img
+                    src="@/assets/娱乐.png"
+                    alt=""
+                    v-if="item.categoryId == 5"
+                  />
+                  <img
+                    src="@/assets/教育.png"
+                    alt=""
+                    v-if="item.categoryId == 6"
+                  />
+                  <img
+                    src="@/assets/美食.png"
+                    alt=""
+                    v-if="item.categoryId == 7"
+                  />
+                  <img
+                    src="@/assets/体育.png"
+                    alt=""
+                    v-if="item.categoryId == 8"
+                  />
                 </div>
               </el-card>
-              
             </el-timeline-item>
           </el-timeline>
+
+          <div
+            style="
+              position: relative;
+              height:60vh;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            "
+            v-else-if="!UserBlogList.length && isSkeleton"
+          >
+            <img src="@/assets/页面为空.png"   width="45%"  alt="" />
+            <span
+              style="
+                font-size: 3vw;
+                color: var(--淡黑井五);
+                font-family: var(--almm);
+                position: absolute;
+                bottom: 0%;
+              "
+            >
+              还没有发布文章~
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -359,8 +512,13 @@
             :disabled="isUpdatePwdBtn"
           >
             <template slot="append">
-              <el-button @click="isUpdatePwdBtn = !isUpdatePwdBtn"
+              <el-button
+                v-if="isUpdatePwdBtn"
+                @click="isUpdatePwdBtn = !isUpdatePwdBtn"
                 >🚨改密码</el-button
+              >
+              <el-button v-else @click="isUpdatePwdBtn = !isUpdatePwdBtn"
+                >⚡不改啦</el-button
               >
             </template></el-input
           >
@@ -415,10 +573,10 @@
         <img src="@/assets/透明背景-二次元_猫耳2_爱给网_aigei_com.gif" alt="" />
       </div>
     </transition>
-  
+
     <transition name="fade">
-    <backToTop @scrollToTop="scrollToTop" v-show="showButton"></backToTop>
-        </transition>
+      <backToTop @scrollToTop="scrollToTop" v-show="showButton"></backToTop>
+    </transition>
   </div>
 </template>
 
@@ -440,7 +598,9 @@ export default {
   },
   data() {
     return {
-      showButton:false,
+      isqh:false,
+      duration: 2000, //弹出消息时间而已
+      showButton: false,
       isUpdatePwdBtn: true,
       isSkeleton: false, //骨架显示
       isFixed: false, //滚动条显示二次元跳舞(((((ી(･◡･)ʃ)))))
@@ -455,9 +615,9 @@ export default {
       drawerDialog: false,
       isPwd: false, //显示确认密码
       formLabelAlign: {
-        password:null,
-        userName:null,
-        password2:null,
+        password: null,
+        userName: null,
+        password2: null,
       },
       loadShow: false,
       imageUrl: "",
@@ -488,11 +648,11 @@ export default {
       loading: false,
       putdata: {
         userId: 0,
-        username: "string",
-        password: "string",
-        imgUrl: "string",
-        email: "string",
-        createdAt: "2024-03-06T12:18:58.690Z",
+        username: "",
+        password: "",
+        imgUrl: "",
+        email: "",
+        createdAt: "",
       },
       emojiData: require("@/emoji.json"),
     };
@@ -504,28 +664,49 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
     window.addEventListener("scroll", this.handleScrollTopBtn);
   },
+  beforeUpdate(){
+   
+  },
+  updated() {
+    
+ 
+  },
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
     window.removeEventListener("scroll", this.handleScrollTopBtn);
   },
+  watch: {
+  
+  },
   methods: {
 
+    togglexx(i){
+     console.log(i,'iiiiiii');
+if(i==0){
+  return ''
+}else{
+  return 'block2'
+}
+    },
 
     handleScrollTopBtn() {
       // 当滚动位置超过页面底部200px时显示按钮
-      console.log(window.scrollY);
-       if(window.scrollY==0){
-        this.showButton=false
-       }else{
-        this.showButton = window.innerHeight + window.scrollY >= document.body.offsetHeight -10;
-       }
-      
-       console.log( this.showButton);
+      // console.log(window.scrollY);
+      if (window.scrollY == 0) {
+        this.showButton = false;
+      } else if (window.scrollY > 500) {
+        this.showButton = true;
+        // this.showButton =
+        //   window.innerHeight + window.scrollY >=
+        //   document.body.offsetHeight - 10;
+      }
+
+      console.log(this.showButton);
     },
     scrollToTop() {
       window.scrollTo({
         top: 0,
-        behavior: "smooth" // 平滑滚动
+        behavior: "smooth", // 平滑滚动
       });
     },
 
@@ -538,42 +719,55 @@ export default {
         this.isFixed = false;
       }
     },
-
+checkHeight(index) {
+      const content = document.getElementById(`content-${index}`);
+      if (content.scrollHeight > 300) {
+        console.log(`元素 ${index} 的高度超过 300px`);
+        // 进行相应的处理
+      } else {
+        console.log(`元素 ${index} 的高度不超过 300px`);
+        // 进行相应的处理
+      }
+    },
     // 在获取用户文章列表数据后执行的方法
     handleUserBlogList() {
-      this.$nextTick(() => {
+      this.heights=[]
+      this.showCard=[]
+      this.svg=[]
+  this.$nextTick(()=>{
         // 遍历所有文章元素，判断是否需要显示 "点击显示更多" 的按钮
         this.UserBlogList.forEach((item, index) => {
           this.svg.push(false);
           const content = document.getElementById(`content-${index}`);
-          this.heights.push("" + content.scrollHeight);
-          console.log(this.heights);
-          const card = document.getElementById(`card-${index}`);
+          content.style.height = ""; // 将最大高度设置为 300px
+        content.style.overflow = "";
+          this.heights.push(content.scrollHeight.toString());
           this.showCard.push(content.scrollHeight > 300);
           if (content.scrollHeight > 300) {
             content.style.height = "300px"; // 将最大高度设置为 300px
             content.style.overflow = "hidden";
           }
         });
-      });
+        console.log(this.heights, "this.heights文章元素的原始高度 保存下来");
+        console.log(this.showCard, "this.showCard元素高度大于300px的判断显示");
+  })
+
+      // this.$forceUpdate()
     },
     // 展开文章收起
     toggleContent(index) {
-      const content = document.getElementById(`content-${index}`);
+      const content = document.getElementById(`content-${index}`); //获取当前的点击的卡片元素
       if (content) {
         content.classList.toggle("expanded");
         const showMoreButton = document.getElementById(
           `show-more-button-${index}`
         );
         if (showMoreButton) {
-          this.$set(this.svg, index, content.classList.contains("expanded"));
-
-          console.log(this.svg[index]);
-          console.log(this.svg);
+          this.$set(this.svg, index, content.classList.contains("expanded")); //小箭头按钮显示
           content.style.transition = ".3s";
           content.style.height = content.classList.contains("expanded")
             ? this.heights[index] + "px"
-            : "300px";
+            : "300px"; //点击展开到原来的高度 再点回到300px
         }
       }
     },
@@ -597,33 +791,34 @@ export default {
       }
     },
     getColor(i) {
-    switch (i) {
+      switch (i) {
         case 1:
-            return "#3366CC"; // 科学: 深蓝色
+          return "#3366CC"; // 科学: 深蓝色
         case 2:
-            return "#33CC33"; // 生活: 绿色
+          return "#33CC33"; // 生活: 绿色
         case 3:
-            return "#FF9900"; // 旅游: 橙色
+          return "#FF9900"; // 旅游: 橙色
         case 4:
-            return "#9933CC"; // 健康: 紫色
+          return "#9933CC"; // 健康: 紫色
         case 5:
-            return "#FF3333"; // 娱乐: 红色
+          return "#FF3333"; // 娱乐: 红色
         case 6:
-            return "#FFCC00"; // 教育: 黄色
+          return "#FFCC00"; // 教育: 黄色
         case 7:
-            return "#CC6633"; // 美食: 棕色
+          return "#CC6633"; // 美食: 棕色
         case 8:
-            return "#3399FF"; // 体育: 淡蓝色
+          return "#3399FF"; // 体育: 淡蓝色
         default:
-            return "#000000"; // 默认颜色
-    }
-},
+          return "#000000"; // 默认颜色
+      }
+    },
 
     // 获取文章
-    getUserBlogPost(id){
-console.log(id);
+    getUserBlogPost(id) {
+      console.log(id);
     },
     getUserInfo() {
+      
       // this.emojiData=this.emojiData.data.split(',')
 
       this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -645,13 +840,23 @@ console.log(id);
           this.loadShow = false;
         })
         .catch((error) => {});
-      // 获取用户的所有文章接口
-      GetUserBlogPostlist(this.userInfo.userId)
+      this.getUserBlogPostLstiFun(0);
+    },
+
+    getUserBlogPostLstiFun(sort) {
+      //动画切换
+    this.isqh= true
+    setTimeout(()=>{
+      this.isqh= false
+    },500)
+      GetUserBlogPostlist(this.userInfo.userId, sort)
         .then((res) => {
           if (res.status == 200) {
             this.isSkeleton = true;
+            
           }
           this.UserBlogList = res.data;
+          // this.isqh= false
           this.handleUserBlogList(); // 在获取到文章列表后执行显示更多按钮的逻辑
         })
         .catch((error) => {});
@@ -808,33 +1013,68 @@ console.log(id);
       this.drawerDialog = false;
       this.formLabelAlign = {};
       this.isPwd = false;
+      this.isUpdatePwdBtn = !this.isUpdatePwdBtn;
       this.$notify({
         title: "叮DDD",
         dangerouslyUseHTMLString: true,
         message: "<strong>取消修改思密达😅😅🤐</strong>",
         position: "top-left",
         type: "warning",
+        duration: this.duration,
       });
     },
     submitUserInfo() {
+      if (
+        this.formLabelAlign.username == "" ||
+        this.formLabelAlign.username == null
+      ) {
+        return this.$notify({
+          title: "叮DDD",
+          dangerouslyUseHTMLString: true,
+          message: "<strong><h3>名字只是个代号<br>你咋没有代号😥</h3></strong>",
+          position: "top-left",
+          type: "warning",
+          duration: this.duration,
+        });
+      }
+      if (this.formLabelAlign.username.length > 6) {
+        return this.$notify({
+          title: "叮DDD",
+          dangerouslyUseHTMLString: true,
+          message: "<strong><h3>🧙‍♂️神说:<br>只能六字🙏</h3></strong>",
+          position: "top-left",
+          type: "warning",
+          duration: this.duration,
+        });
+      }
+
       if (!this.isUpdatePwdBtn) {
-        if (this.formLabelAlign.password ==null||this.formLabelAlign.password =='' ) {
+        if (
+          this.formLabelAlign.password == null ||
+          this.formLabelAlign.password == ""
+        ) {
           return this.$notify({
             title: "叮DDD",
             dangerouslyUseHTMLString: true,
-            message: "<strong><h1>密码呢！<br> 我问你密码呢？😅😑😡</h1></strong>",
+            message:
+              "<strong><h3>密码呢！<br> 我问你密码呢？😅😑😡</h3></strong>",
             position: "top-left",
             type: "warning",
+            duration: this.duration,
           });
         }
 
-        if (this.formLabelAlign.password2 ==null||this.formLabelAlign.password2 =='' ) {
+        if (
+          this.formLabelAlign.password2 == null ||
+          this.formLabelAlign.password2 == ""
+        ) {
           return this.$notify({
             title: "叮DDD",
             dangerouslyUseHTMLString: true,
-            message: "<strong><h1>确认密码没有啊 兄弟！😫</h1></strong>",
+            message: "<strong><h3>确认密码没有啊 兄弟！😫</h3></strong>",
             position: "top-left",
             type: "warning",
+            duration: this.duration,
           });
         }
 
@@ -842,18 +1082,20 @@ console.log(id);
           return this.$notify({
             title: "叮DDD",
             dangerouslyUseHTMLString: true,
-            message: "<strong><h1>太长了！！6位数😤</h1></strong>",
+            message: "<strong><h3>太长了！！6位数😤</h3></strong>",
             position: "top-left",
             type: "warning",
+            duration: this.duration,
           });
         }
         if (this.formLabelAlign.password2 != this.formLabelAlign.password) {
           return this.$notify({
             title: "叮DDD",
             dangerouslyUseHTMLString: true,
-            message: "<strong><h1>两次密码不一致🤣</h1></strong>",
+            message: "<strong><h3>两次密码不一致🤣</h3></strong>",
             position: "top-left",
             type: "warning",
+            duration: this.duration,
           });
         }
       }
@@ -879,40 +1121,91 @@ console.log(id);
 </script>
 
 <style scoped>
-.categoryBox img{
-width: 100%;
-height: 100%;
+.block{
+  position: relative;
+ top: 0;
+ transition: .3s;
 }
-.categoryBox{
+.block2{
+  top: -200px;
+  transition: .3s;
+}
+.srotBtn {
+  position: relative;
+  font-family: var(--almm);
+
+}
+.srotBtn::after {
+  /* opacity: 0; */
+  position: absolute;
+  top: -8%;
+  right: -5%;
+  transition: 0.1s;
+}
+
+.new::after {
+  content: "New";
+
+  color: darkgreen;
+}
+.hot::after {
+  content: "Hot";
+
+  color: rgb(186, 0, 0);
+}
+.default::after {
+  content: "Def";
+
+  color: rgb(133, 133, 133);
+}
+.srotBtn:hover::after {
+  opacity: 1;
+  top: -30%;
+  right: -5%;
+  transition: 0.1s;
+}
+/*排序 */
+.srot {
+  display: flex;
+  justify-content: flex-end;
+}
+/* 没数据就100vh */
+.hide {
+  overflow: hidden;
+}
+.categoryBox img {
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+.categoryBox {
   position: absolute;
   z-index: 0;
-  top:  0;
+  top: 0;
   right: 0;
-height: 100px;
-opacity: 0.1;
-transition: .3s;
+  height: 100px;
+  opacity: 0.1;
+  transition: 0.3s;
   /* background-color: aliceblue; */
 }
-.cardA:hover .categoryBox{
-  right: -5%;;
+.cardA:hover .categoryBox {
+  right: -5%;
   z-index: 1;
-  transition: .3s;
+  transition: 0.3s;
   opacity: 1;
 }
-.categoryText{
+.categoryText {
   opacity: 1;
   font-size: 1.5vw;
-  transition: .5s;
-  font-family: '阿里妈妈刀隶体';
+  transition: 0.5s;
+  font-family: "阿里妈妈刀隶体";
 }
-.cardA:hover  .categoryText{
+.cardA:hover .categoryText {
   /* display: none; */
   opacity: 0.1;
   font-size: 5vw;
-  transition: .5s;
+  transition: 0.5s;
   position: absolute;
-
-
 }
 .gifImg {
   position: fixed;
@@ -936,7 +1229,7 @@ transition: .3s;
 }
 
 body {
-  height: 100vh;
+  /* height: 100vh; */
   width: 100%;
 }
 .crop-dialog {
@@ -991,6 +1284,7 @@ body {
   justify-content: center;
   position: relative;
 }
+
 .left {
   /* border: 1px solid #000; */
   height: 100%;
@@ -1038,18 +1332,23 @@ body {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-  /* transform: translateY(-100%); */
+  transform: translateY(-100%);
 }
 /* 名字 */
 .userName {
   display: flex;
-  font-size: 2vw;
+  font-size: 2vw; 
   justify-content: center;
   align-items: center;
-  height: 50%;
+  height: 30%;
+  /* background-color: aqua; */
   color: var(--Maintextcolor);
-  font-family: "微软雅黑";
+  font-family: var(--almm);
+  
+
 }
+
+
 .updateUserInfoBox {
   display: flex;
   flex-direction: column;
@@ -1073,6 +1372,7 @@ body {
   background-color: var(--bgColor);
   padding: 1vw;
   color: var(--淡黑井五);
+  font-family: var(--almm);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1117,21 +1417,35 @@ body {
   font-family: "Crotah free version";
   font-size: 1vw;
   color: var(--淡黑井五);
+ 
+  
 }
 .userInfoTextNUM {
+  width: 100%;
   font-family: "Crotah free version";
-  font-size: 1.5vw;
+  font-size: 1.2vw;
   color: var(--黄色突出);
+  
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.3s ease;
+@keyframes flicker {
+  0% { text-shadow: 2px 2px 2px  var(--黄色突出); }
+  50% { text-shadow: 2px 2px 5px  rgba(251, 251, 251, 0.5); }
+  100% { text-shadow: 2px 2px 2px var(--黄色突出); }
 }
-.fade-enter,
-.fade-leave-to {
+
+.fade1-enter-active {
+  animation: flicker .5s ease;
+  
+}
+.fade1-leave-active {
+  transition: all .8s ease;
+}
+.fade1-enter,
+.fade1-leave-to {
   opacity: 0;
   transform: translateY(-100%);
+
 }
 .cardA {
   position: relative;
@@ -1198,4 +1512,30 @@ body {
     box-shadow: 0 0 0 15px rgba(255, 106, 0, 0.025);
   }
 }
+.tagg{
+  animation:.5s wipe-in-up ease-in-out 1 ;
+}
+/* 动画 */
+
+@keyframes wipe-in-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+
+
+@keyframes wipe-out-down {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+
 </style>

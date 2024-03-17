@@ -25,7 +25,7 @@ methods:{
 .backTop{
     position: fixed;
     bottom: 50px;
-    right: 50px;
+    right: 20px;
 }
 .button {
   width: 50px;

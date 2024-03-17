@@ -7,8 +7,8 @@
     </el-carousel-item>
   </el-carousel>
   <div class="haea" v-if="list.length>0"><span>Blog</span></div>
-    <blogList :list="list"></blogList>
-    <bookLoading v-show="isLoading && total !== list.length"></bookLoading>
+    <blogList :list="list" :status="status"></blogList>
+    <bookLoading v-show="isLoading"></bookLoading>
 <transition name="fade">
     <backToTop @scrollToTop="scrollToTop" v-show="showButton"></backToTop>
         </transition>
@@ -34,6 +34,7 @@ export default {
       showButton:false,
       total: 0,
       title: "",
+      status:0,
     };
   },
 
@@ -49,14 +50,17 @@ export default {
   },
 
   methods: {
-
     handleScroll() {
       // 当滚动位置超过页面底部200px时显示按钮
-       
-       this.showButton = window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000;
-
-       console.log(window.innerHeight + window.scrollY >= document.body.offsetHeight - 200);
+      // console.log(window.scrollY);
+       if(window.scrollY==0){
+        this.showButton=false
+       }else{
+        this.showButton = window.innerHeight + window.scrollY >= document.body.offsetHeight -1000;
+       }
+      console.log(this.showButton);
     },
+ 
     scrollToTop() {
       window.scrollTo({
         top: 0,
@@ -64,12 +68,14 @@ export default {
       });
     },
     getList() {
+      this.status=0
       GetBlogPosts({
         addNum: this.addNum,
         title: this.title,
       }).then((res) => {
           this.list = res.data;
-          console.log(this.list, "lb");
+         this.status=res.status
+          console.log(this.list, "文章列表");
           GetBlogPostsTotal()
             .then((res) => {
               this.total = res.data;
@@ -100,7 +106,7 @@ export default {
               this.addNum += 3;
               this.getList(); // 获取更多数据
             }
-          }, 800);
+          }, 300);
         } else {
          
           // 没有更多数据可加载，不需要发起请求
@@ -112,6 +118,7 @@ export default {
 
     setSearchVal(SVal) {
       this.isLoading = false; // 停止自动加载更多数据
+      console.log(  this.isLoading);
       this.title = SVal;
       window.removeEventListener("scroll", this.scrollBottmo); // 移除滚动事件监听器
       clearTimeout(this.tiemOut);

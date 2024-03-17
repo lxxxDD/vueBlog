@@ -119,10 +119,7 @@ components:{
           if (res.data == "error") {
             return this.$message.error("用户名或密码错误");
           } else {
-            console.log(res.data, "登录成功");
-
             localStorage.setItem("userInfo", JSON.stringify(res.data));
-
             this.loginInfo = {
               userId: 0,
               username: null,
@@ -133,7 +130,9 @@ components:{
             this.$router.push("/");
           }
         })
-        .catch((res) => {});
+        .catch((res) => {
+          this.$message.error('系统异常！')
+        });
     },
     UserRegister() {
       if (this.Userinfo.username == null || this.Userinfo.username == "") {

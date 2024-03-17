@@ -5,6 +5,7 @@ import blogList from '../components/blogList.vue'
 import login from '../components/login/login.vue'
 import userInfo from '../components/user/userInfo.vue'
 import myBloglist from '../components/myBlogList/myBloglist.vue'
+import detailPage from '../components/BlogDetail/detailPage.vue'
 import { Message } from 'element-ui'; // 引入 Element UI 的 Message 组件
 Vue.use(VueRouter)
 
@@ -36,6 +37,13 @@ const routes = [
     meta: {
       requiresAuth: true // 设置路由需要用户登录权限
     }
+  },
+  // 文章详情页
+  {
+    path: '/detailPage',
+    name:'detailPage',
+    component: detailPage,
+    
   },
   //我的文章
   {

@@ -1,10 +1,12 @@
 <template>
-
-
-  <div id="nav" :class="{ fixed: isFixed}" @mouseover="isFixed2=true" @mouseout="isFixed2=false" >
+  <div
+    id="nav"
+    :class="{ fixed: isFixed }"
+    @mouseover="isFixed2 = true"
+    @mouseout="isFixed2 = false"
+  >
     <div class="logo">Dream</div>
-    <div class="rightBox" >
-   
+    <div class="rightBox">
       <div class="search">
         <div class="restSearch" v-if="SearchVal" @click="SearchFun1">❌</div>
         <div class="input-container">
@@ -14,8 +16,8 @@
             name="text"
             type="text"
             v-model="SearchVal"
-         @input="SearchFun"
-         @keyup="SearchFun"
+            @input="SearchFun"
+            @keyup="SearchFun"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -39,36 +41,94 @@
           </svg>
         </div>
       </div>
-      <div class="btn" :class="{btnFill:isFixed||isFixed2}">
-        <el-button type="success"  @click="$router.push('/login')" plain v-if="userInfo==null">去登录</el-button>
-    
-        <el-dropdown trigger="click"  v-else  >
-      <div class="el-dropdown-link UserImgBox">
-       <img :src="$BASEURL+userInfo.imgUrl" alt="" width="100%" style="border-radius: 100%;">
-      </div>
-      <el-dropdown-menu slot="dropdown"    >
-      
-        <el-dropdown-item >  <el-button icon="el-icon-user-solid"  @click="$router.push('/userInfo')" type="text" style="width: 100%;"  >个人中心</el-button></el-dropdown-item>
-        <el-dropdown-item>  <el-button icon="el-icon-s-order"  type="text" style="width: 100%;"  @click="$router.push('/myBloglist')">我的文章</el-button></el-dropdown-item>
-        <el-dropdown-item   >
-          <el-button icon="el-icon-s-release" @click="rest" type="text" style="width: 100%;color: #555555a3;" >注销账号</el-button>
-        </el-dropdown-item>
-        <el-dropdown-item   >
-          <el-button icon="el-icon-error" @click="$router.push('/login')" type="text" style="width: 100%;color: red;" >退出登录</el-button>
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
+      <div class="btn" :class="{ btnFill: isFixed || isFixed2 }">
+        <el-button
+          type="success"
+          @click="$router.push('/login')"
+          plain
+          v-if="userInfo == null"
+          >去登录</el-button
+        >
+
+        <el-dropdown trigger="click" v-else>
+          <div class="el-dropdown-link UserImgBox" style="border-radius: 100% ;overflow: hidden;">
+            <el-skeleton
+              v-if="userInfo.imgUrl==null"
+              animated
+            >
+              <template slot="template">
+                <el-skeleton-item
+                  variant="image"
+                  style="aspect-ratio: 1/1; width: 100%; height: 100%"
+                />
+              </template>
+            </el-skeleton>
+            <img
+            v-else
+              :src="$BASEURL + userInfo.imgUrl"
+              alt=""
+              width="100%"
+              style="border-radius: 100%"
+            />
+          </div>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <el-button
+                icon="el-icon-user-solid"
+                @click="$router.push('/userInfo')"
+                type="text"
+                style="width: 100%"
+                >个人中心</el-button
+              ></el-dropdown-item
+            >
+            <!-- <el-dropdown-item>
+              <el-button
+                icon="el-icon-s-order"
+                type="text"
+                style="width: 100%"
+                @click="$router.push('/myBloglist')"
+                >我的文章</el-button
+              ></el-dropdown-item -->
+            
+            <el-dropdown-item>
+              <el-button
+                icon="el-icon-s-release"
+                @click="rest"
+                type="text"
+                style="width: 100%; color: #555555a3"
+                >注销账号</el-button
+              >
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <el-button
+                icon="el-icon-error"
+                @click="$router.push('/login')"
+                type="text"
+                style="width: 100%; color: red"
+                >退出登录</el-button
+              >
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
         <transition name="fade">
-          <el-button  type="primary" class="xie"  plain v-show="isFixed||isFixed2"> 写文章</el-button>
-    </transition>
-       
+          <el-button
+            type="primary"
+            class="xie"
+            plain
+            v-show="isFixed || isFixed2"
+            @click="$router.push('/myBloglist')"
+          >
+            写文章</el-button
+          >
+        </transition>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
+import router from '@/router';
+
 export default {
   name: "AppNav",
 
@@ -76,9 +136,8 @@ export default {
     return {
       isFixed: false,
       isFixed2: false,
-      userInfo:JSON.parse(localStorage.getItem('userInfo'))||null,
-      SearchVal:"",
-      
+      userInfo: JSON.parse(localStorage.getItem("userInfo")) || null,
+      SearchVal: "",
     };
   },
 
@@ -96,42 +155,40 @@ export default {
       const twentyPercentHeight = window.innerHeight * 3; // 计算页面高度的20%
       if (window.scrollY > 50) {
         this.isFixed = true;
-      
-    
       } else {
         this.isFixed = false;
-        
       }
 
       if (window.scrollY > twentyPercentHeight) {
-    // 如果滚动高度超过页面高度的20%，则收起导航栏
-    this.isFixed = false;
-    // console.log("滚动，导航栏收起");
-  }
+        // 如果滚动高度超过页面高度的20%，则收起导航栏
+        this.isFixed = false;
+        // console.log("滚动，导航栏收起");
+      }
     },
-    SearchFun1(){
-      this.SearchVal=""
-      this.$emit('getSearchVal',this.SearchVal)
+    SearchFun1() {
+      this.SearchVal = "";
+      this.$emit("getSearchVal", this.SearchVal);
     },
-    SearchFun(){
-      this.$emit('getSearchVal',this.SearchVal)
+    SearchFun() {
+      this.$emit("getSearchVal", this.SearchVal);
       console.log(this.SearchVal);
     },
-    rest(){
-      this.$router.push('/login')
-      
-      localStorage.removeItem('userInfo')
-    }
+    rest() {
+      this.$router.push("/login");
+
+      localStorage.removeItem("userInfo");
+    },
   },
 };
 </script>
 
 <style  scoped>
-
-.fade-enter-active, .fade-leave-active {
-  transition: all .5s ease;
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
   /* transform: translateY(-100%); */
 }
@@ -144,13 +201,11 @@ export default {
   width: 100%;
   padding: 30px 80px;
   margin-bottom: 50px;
-  transition: all .5s;
-  border-bottom:1px solid  #54545410;
-  
-
+  transition: all 0.5s;
+  border-bottom: 1px solid #54545410;
 }
-.UserImgBox{
-  background-color: darkorchid;
+.UserImgBox {
+  /* background-color: darkorchid; */
 
   height: 50px;
   width: 50px;
@@ -163,15 +218,13 @@ export default {
   top: 0;
   left: 0;
   background-color: rgba(255, 255, 255, 0.774);
-  transition: all .5s;
+  transition: all 0.5s;
   z-index: 9999999;
- 
 }
 .logo {
   font-size: 3rem;
   color: var(--Maintextcolor);
-  font-family:"Crotah free version";
-
+  font-family: var(--drfont);
 }
 .rightBox {
   display: flex;
@@ -179,37 +232,33 @@ export default {
   /* overflow: hidden; */
   /* background-color: red; */
 }
-.rightBox>div{
-  margin:  auto 30px;
+.rightBox > div {
+  margin: auto 30px;
 }
 .search {
-
   position: relative;
-  
-  
 }
 
-.restSearch{
+.restSearch {
   position: absolute;
   right: 10%;
   top: 50%;
   z-index: 9999;
-  transform: translate(100%,-50%);
+  transform: translate(100%, -50%);
   /* background-color: #fff; */
   padding-right: 5%;
-  transition: all .5s;
+  transition: all 0.5s;
 }
 .btn {
   display: flex;
   justify-content: space-between;
-  transition: all .5s;
+  transition: all 0.5s;
   width: 100px;
   height: 50px;
   padding: 0px 10px;
   /* background-color: #750550; */
-
 }
-.btnFill{
+.btnFill {
   width: 200px;
 }
 /* 搜索框 */
@@ -218,7 +267,7 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .input {
@@ -241,7 +290,7 @@ export default {
   color: rgb(131, 128, 128);
 }
 
-  .input:focus,
+.input:focus,
 .input:not(:placeholder-shown) {
   background-color: #fff;
   border: 1px solid rgb(98, 0, 255);
