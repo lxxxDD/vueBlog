@@ -2,8 +2,8 @@
   <div style="">
     <AppNav @getSearchVal="setSearchVal"></AppNav>
     <el-carousel :interval="4000" type="card" style="margin-bottom: 50px;" height="350px">
-    <el-carousel-item v-for="item in 6" :key="item">
-      <h3 class="medium">{{ item }}</h3>
+    <el-carousel-item v-for="item in imgList" :key="item">
+      <div class="medium">{{ item.a}}</div>
     </el-carousel-item>
   </el-carousel>
   <div class="haea" v-if="list.length>0"><span>Blog</span></div>
@@ -35,6 +35,19 @@ export default {
       total: 0,
       title: "",
       status:0,
+      imgList:[ {
+          a:'DreamBlog',
+        },
+        {
+          a:'明日复明日',
+        },
+        {
+          a:'明日何其多',
+        },
+       
+      ]
+       
+      
     };
   },
 
@@ -142,6 +155,16 @@ export default {
   opacity: 0;
   transform: translateY(-100%);
 }
+.medium{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 5vw;
+  font-family: var(--almm);
+  color: var(--淡黑井五);
+  text-shadow: 0 0 5px #fff;
+}
 .haea {
   /* text-align: center; */
   padding: 20px;
@@ -177,7 +200,9 @@ export default {
   .el-carousel__item:nth-child(2n) {
     background-color: #99a9bf;
   }
-  
+  .el-carousel__item:nth-child(1) {
+  background-color: #000000; /* 第一个轮播项背景色 */
+}
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
   }

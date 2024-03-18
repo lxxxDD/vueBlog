@@ -81,4 +81,16 @@ export function setView(id) {
     )
 }
 
+// 发布文章
+export function PostBlogPost(data) {
+    console.log(data);
+     return api(
+         {
+             method: 'post',
+             url: '/api/BlogPosts/PostBlogPost',
+             data
+         }
+     )
+ }
+
 
