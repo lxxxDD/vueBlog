@@ -1,8 +1,13 @@
 # dream-blog
 
-## Project setup
+## 安装依赖
 ```
-npm install
+安装打开 终端安装依赖 npm i 或者 npm install
+```
+
+## 运行
+```
+npm run dev、
 ```
 
 ### Compiles and hot-reloads for development
